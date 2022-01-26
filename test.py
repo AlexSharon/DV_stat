@@ -3,8 +3,8 @@ from datetime import date
 import pandas as pd
 import os
 
-df = pd.read_csv ('FY2022-ceac-2022-01-15.csv')
-#df = df.loc[(df['region'] == 'EU')]# & (df['status'] != 'None')]
+df = pd.read_csv ('FY2022-ceac.csv')
+df = df.loc[(df['region'] == 'EU')]# & (df['status'] != 'None')]
 
 #print(df)
 
