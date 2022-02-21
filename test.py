@@ -38,7 +38,7 @@ df_clean['caseNumber'] = pd.to_numeric(df_clean['caseNumber'])
 df_clean.to_sql('ceac', conn, if_exists="replace", chunksize=500)
 
 df_output = pd.DataFrame(columns=['Case_range', 'Issued', 'AP', 'Refused', 'Transfer_in_Progress', 'Ready',
-                                  'In_Transit', 'AT_NVC', 'TOTAL'])
+                                  'In_Transit', 'AT_NVC', 'TOTAL', 'NVC_share'])
 
 tracer = 0
 i = 0
@@ -54,6 +54,7 @@ for cn in range(1000, 29000, 1000):
     transit = df_chunk.loc[df_chunk['status'] == 'In Transit'].shape[0]
     nvc = df_chunk.loc[df_chunk['status'] == 'At NVC'].shape[0]
     total = df_chunk.shape[0]
+    nvc_share = nvc / float(total)
 
     df_output.loc[i] = [cn,
                         issued,
@@ -63,7 +64,8 @@ for cn in range(1000, 29000, 1000):
                         ready,
                         transit,
                         nvc,
-                        total]
+                        total,
+                        nvc_share]
     i += 1
 
 df_output.to_sql('stat', conn, if_exists="replace", chunksize=500)
@@ -92,8 +94,7 @@ for df, name in zip(df_for_report, sheet_names):
 
     # Add some cell formats.
     format1 = workbook.add_format({'num_format': '### ##0.00'})
-    #format2 = workbook.add_format()
-    #format2.set_num_format('dd.mm.yyyy')
+    format2 = workbook.add_format({'num_format': '0.00%'})
 
     # Set the column width and format.
     if name == 'ceac':
@@ -121,6 +122,7 @@ for df, name in zip(df_for_report, sheet_names):
         worksheet.set_column('G:G', 10, None)  # transit
         worksheet.set_column('H:H', 8, None)  # NVC
         worksheet.set_column('I:I', 9, None)  # total
+        worksheet.set_column('J:J', 9, format2)  # percent
     else:
         pass
 writer.save()
