@@ -2,14 +2,21 @@ from datetime import date
 
 import pandas as pd
 import os
+import sqlite3 as sql
 
-df = pd.read_csv ('FY2022-ceac.csv')
-df = df.loc[(df['region'] == 'EU')]# & (df['status'] != 'None')]
+conn = sql.connect('CEAC.db')
 
-#print(df)
+df = pd.read_csv('FY2022-ceac.csv')
+df = df.loc[(df['region'] == 'EU')] # & (df['status'] != 'None')]
+df_clean = df.loc[df['status'] != 'None']
 
 
-file_name = str(date.today()) + "_report_all.xlsx"
+#df.to_sql('ceac', conn, if_exists="replace")
+
+print(df_clean)
+
+"""
+file_name = str(date.today()) + "_report.xlsx"
 writer = pd.ExcelWriter(file_name, engine='xlsxwriter')
 df.to_excel(writer, sheet_name='invoices', startrow=1, header=False, index=False)
 
@@ -31,3 +38,4 @@ worksheet.set_column('I:I', 12, None)    #
 worksheet.set_column('J:J', 12, None)    #
 
 writer.save()
+"""
