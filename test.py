@@ -14,7 +14,6 @@ for i in range(df_clean.shape[0]):
     for column in (5, 6):
         date = df_clean.iat[i, column]
         if date != 'None':
-            date = date.replace("-", ".")
             date = date.replace("Jan", "01")
             date = date.replace("Feb", "02")
             date = date.replace("Mar", "03")
@@ -27,7 +26,12 @@ for i in range(df_clean.shape[0]):
             date = date.replace("Oct", "10")
             date = date.replace("Nov", "11")
             date = date.replace("Dec", "12")
+            year = date[6:]
+            month = date[3:5]
+            day = date[0:2]
+            date = year + '-' + month + '-' + day
             df_clean.iat[i, column] = date
+
 
 df_clean = df_clean.drop(columns=['caseNumberFull'])
 df_clean['caseNumber'] = pd.to_numeric(df_clean['caseNumber'])
@@ -88,29 +92,35 @@ for df, name in zip(df_for_report, sheet_names):
 
     # Add some cell formats.
     format1 = workbook.add_format({'num_format': '### ##0.00'})
+    #format2 = workbook.add_format()
+    #format2.set_num_format('dd.mm.yyyy')
 
     # Set the column width and format.
     if name == 'ceac':
-        worksheet.set_column('A:A', 10, None)  # lot
-        worksheet.set_column('B:B', 12, None)  # invoice
-        worksheet.set_column('C:C', 12, None)  # type
-        worksheet.set_column('D:D', 10, None)  # date
-        worksheet.set_column('E:E', 14, format1)  # value total
-        worksheet.set_column('F:F', 12, format1)  # mp
-        worksheet.set_column('G:G', 14, format1)  # value actual
-        worksheet.set_column('H:H', 10, format1)  # freight
-        worksheet.set_column('I:I', 10, format1)  # ins
-        worksheet.set_column('J:J', 10, format1)  # total
+        worksheet.set_column('A:A', 5, None)  # region
+        worksheet.set_column('B:B', 9, None)  # caseNumber
+        worksheet.set_column('C:C', 8, None)  # consulate
+        worksheet.set_column('D:D', 10, None)  # status
+        worksheet.set_column('E:E', 11, None)  # submitDate
+        worksheet.set_column('F:F', 11, None)  # statusDate
+        worksheet.set_column('G:G', 8, None)  # issued
+        worksheet.set_column('H:H', 8, None)  # AP
+        worksheet.set_column('I:I', 8, None)  # Ready
+        worksheet.set_column('J:J', 8, None)  # Refused
+        worksheet.set_column('K:K', 8, None)  # in transit
+        worksheet.set_column('L:L', 8, None)  # transfer
+        worksheet.set_column('M:M', 8, None)  # NVC
+        worksheet.set_column('N:N', 8, None)  # potAP
     elif name == 'stat':
-        worksheet.set_column('A:A', 6, None)  # mod
-        worksheet.set_column('B:B', 10, None)  # lot
-        worksheet.set_column('C:C', 12, format1)  # main supply
-        worksheet.set_column('D:D', 12, format1)  # mp
-        worksheet.set_column('E:E', 12, format1)  # mp_Freight
-        worksheet.set_column('F:F', 12, format1)  # sum
-        worksheet.set_column('G:G', 12, format1)  # checksum
-        worksheet.set_column('H:H', 8, None)  # status
-        worksheet.set_column('I:I', 17, format1)  # delta
+        worksheet.set_column('A:A', 10, None)  # case
+        worksheet.set_column('B:B', 10, None)  # issued
+        worksheet.set_column('C:C', 10, None)  # ap
+        worksheet.set_column('D:D', 10, None)  # refused
+        worksheet.set_column('E:E', 10, None)  # transfer
+        worksheet.set_column('F:F', 10, None)  # ready
+        worksheet.set_column('G:G', 10, None)  # transit
+        worksheet.set_column('H:H', 8, None)  # NVC
+        worksheet.set_column('I:I', 9, None)  # total
     else:
         pass
 writer.save()
